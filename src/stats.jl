@@ -149,6 +149,14 @@ function Base.delete!(o::CountMap, level)
     o.n -= x
     o
 end
+function Statistics.mean(cm::CountMap{T}) where T
+	cmdict = value(cm) 
+    k = cmdict |> keys |> collect |> sort # Sorted keys (values)
+    f = [cmdict[x] for x in k] # Occupancies (frequency) of each values
+    weightedMean = sum(k .* f) / sum(f) # Compute the weighted mean
+    return weightedMean
+end    
+# //NOTE: Similarly we could also add quantile (that should be probably added in OnlineStats.jl)
 
 #-----------------------------------------------------------------------# CovMatrix
 """
