@@ -369,4 +369,17 @@ println("  > Variance")
     @test std(o) ≈ std(v)
 end
 
+println("  > CountMap Mean")
+@testset "CountMap Mean" begin
+    # Test Mean for CountMap
+    m = Mean()
+    cm = CountMap(Int)
+    for i=1:100
+        randints = rand(1:10, 1000)
+        fit!(m, randints)
+        fit!(cm, randints)
+        @test mean(cm) ≈ mean(m) atol = 1e-6
+    end
+end
+
 end # end "Test Stats"
