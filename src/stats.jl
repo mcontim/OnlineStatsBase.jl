@@ -104,6 +104,8 @@ fit!(o, "A" => -1)
     OnlineStatsBase.probs(o)
     OnlineStats.pdf(o, 1)
     collect(keys(o))
+    mean(o)
+    quantile(o, .5)
     sort!(o)
     delete!(o, 1)
 """
@@ -149,23 +151,17 @@ function Base.delete!(o::CountMap, level)
     o.n -= x
     o
 end
-function Statistics.mean(cm::CountMap{T}) where T
-    v, w = _compute_valueweights(cm)
+_values_weights(o::CountMap) = collect(keys(o)), StatsBase.fweights(collect(values(o)))
+
+function Statistics.mean(o::CountMap)
+    v, w = _values_weights(o)
     return StatsBase.mean(v, w)
 end
-function Statistics.quantile(cm::CountMap{T}, q::Float64) where T
-    v, w = _compute_valueweights(cm)
-    out = T <: Integer ? round(Int, StatsBase.quantile(v, w, q)) : StatsBase.quantile(v, w, q)
-    return out
+function Statistics.quantile(o::CountMap, p)
+    v, w = _values_weights(o)
+    return StatsBase.quantile(v, w, p)
 end
-Statistics.quantile(cm::CountMap{T}, qvec::Vector{<:Float64}) where T = map(x -> Statistics.quantile(cm, x), qvec)
 
-function _compute_valueweights(cm::CountMap{T}) where T
-    v = collect(keys(cm)) 
-    w = StatsBase.fweights(collect(values(cm)))
-    
-    return v, w
-end
 #-----------------------------------------------------------------------# CovMatrix
 """
     CovMatrix(p=0; weight=EqualWeight())
