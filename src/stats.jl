@@ -153,11 +153,11 @@ function Base.delete!(o::CountMap, level)
 end
 _values_weights(o::CountMap) = collect(keys(o)), StatsBase.fweights(collect(values(o)))
 
-function Statistics.mean(o::CountMap)
+function Statistics.mean(o::CountMap{<:Number})
     v, w = _values_weights(o)
     return StatsBase.mean(v, w)
 end
-function Statistics.quantile(o::CountMap, p)
+function Statistics.quantile(o::CountMap{<:Real}, p)
     v, w = _values_weights(o)
     return StatsBase.quantile(v, w, p)
 end

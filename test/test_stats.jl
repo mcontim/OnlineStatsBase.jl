@@ -111,6 +111,10 @@ println("  > CountMap")
     cm = fit!(CountMap(Float64), y)
     @test mean(cm) ≈ mean(y)
     @test quantile(cm, ps) ≈ quantile(y, ps)
+
+    cm = fit!(CountMap(String), ["a", "b"])
+    @test_throws MethodError mean(cm)
+    @test_throws MethodError quantile(cm, .5)
 end
 #-----------------------------------------------------------------------# CountMissing
 println("  > CountMissing")
